@@ -49,15 +49,15 @@ def time_checker(current_utc_datetime, utc_source_date,
     current_datetime = datetime.datetime(cur_y, cur_m, cur_d, cur_h, cur_min, cur_s)
 
     if current_datetime <= start_datetime:
-        status_label = "Time to run:"
+        status_label = "Time to run"
         time_label = start_datetime - current_datetime
         color = "blue"
     elif start_datetime <= current_datetime <= stop_datetime:
-        status_label = "RUN IS GOING! Time to stop:"
+        status_label = "RUN IS GOING! Time to stop"
         time_label = stop_datetime - current_datetime
         color = "green"
     else:
-        status_label = "Run has been finished:"
+        status_label = "Run has been finished"
         time_label = current_datetime - stop_datetime
         color = "red"
 
@@ -109,7 +109,7 @@ def page_content_update():
             name_label.grid(row=4*i+17, column=1, ipadx=4, padx=4)
 
 
-        sleep(1)
+        sleep(5)
 # =============================================================================
 #
 # =============================================================================        
@@ -250,7 +250,7 @@ run_status, run_time, run_color = time_checker(utc_datetime_now, not_zero_durati
 
 ###################  Разметка вывода  HiScore  ######################
 
-hiscore_label = tk.Label(master=timetable_frame, text="HiScore timetable")
+hiscore_label = tk.Label(master=timetable_frame, text="HiScore timetable", fg='darkslategrey')
 
 hiscore_time_utc_start_text_label = tk.Label(master=timetable_frame, text="UTC start time")
 hiscore_time_utc_stop_text_label = tk.Label(master=timetable_frame, text="UTC stop time")
@@ -295,7 +295,7 @@ hiscore_run_status_label.grid(row=6, column=7, ipadx=4, padx=4)
 # =============================================================================
 ###################  Разметка вывода  IACT  ######################
 
-iact_label = tk.Label(master=timetable_frame, text="IACTs timetable")
+iact_label = tk.Label(master=timetable_frame, text="IACTs timetable", fg='darkslategrey')
 iact_label.grid(row=7, column=0, ipadx=4, padx=4)
 
 for i in range(len(not_zero_duration_sources)):
@@ -309,8 +309,8 @@ for i in range(len(not_zero_duration_sources)):
 ###################  Разметка вывода  IACT  ######################
     dt_text_label = tk.Label(master=timetable_frame, text="Duration")
     name_text_label = tk.Label(master=timetable_frame, text="Source")
-    ra_text_label = tk.Label(master=timetable_frame, text="ra")
-    dec_text_label = tk.Label(master=timetable_frame, text="dec")
+    ra_text_label = tk.Label(master=timetable_frame, text="Right ascension")
+    dec_text_label = tk.Label(master=timetable_frame, text="Declination")
     ut_time_beg_text_label = tk.Label(master=timetable_frame, text="UTC start time")
     ut_time_end_text_label = tk.Label(master=timetable_frame, text="UTC stop time")
     loc_date_beg_text_label = tk.Label(master=timetable_frame, text="Tunka start date")
