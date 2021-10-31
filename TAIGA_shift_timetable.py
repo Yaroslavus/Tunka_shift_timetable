@@ -6,6 +6,7 @@ Created on Tue Oct 26 20:55:06 2021
 @author: yaroslav
 """
 
+import gc
 import datetime
 import tkinter as tk
 import threading
@@ -26,27 +27,46 @@ timezone_utc = pytz.timezone('UTC')
 
 def duration(date, start_time, stop_time):
     
+    garbage = []
+    
     d, m, y = [int(x) for x in date.split(".")]
     h_start, min_start = [int(x) for x in start_time.split(":")]
     h_stop, min_stop = [int(x) for x in stop_time.split(":")]
+    
+    for garbage_item in (d, m, y, h_start, h_stop, min_start, min_stop):
+        garbage.append(garbage_item)
 
     start_datetime = datetime.datetime(y, m, d, h_start, min_start)
     stop_datetime = datetime.datetime(y, m, d, h_stop, min_stop)
+    
+    for garbage_item in garbage:
+        del garbage_item
     
     return stop_datetime - start_datetime
 
 def time_checker(current_utc_datetime, utc_source_date,
                  utc_source_start_time, utc_source_stop_time):
+    
+    garbage = []
 
     cur_y, cur_m, cur_d, cur_h, cur_min, cur_s = current_utc_datetime.timetuple()[:6]
+    
+    for garbage_item in (cur_y, cur_m, cur_d, cur_h, cur_min, cur_s):
+         garbage.append(garbage_item)
     
     d, m, y = [int(x) for x in utc_source_date.split(".")]
     h_start, min_start = [int(x) for x in utc_source_start_time.split(":")]
     h_stop, min_stop = [int(x) for x in utc_source_stop_time.split(":")]
+    
+    for garbage_item in (d, m, y, h_start, h_stop, min_start, min_stop):
+        garbage.append(garbage_item)
 
     start_datetime = datetime.datetime(y, m, d, h_start, min_start)
     stop_datetime = datetime.datetime(y, m, d, h_stop, min_stop)
     current_datetime = datetime.datetime(cur_y, cur_m, cur_d, cur_h, cur_min, cur_s)
+    
+    for garbage_item in (start_datetime, stop_datetime, current_datetime):
+        garbage.append(garbage_item)
 
     if current_datetime <= start_datetime:
         status_label = "Time to run"
@@ -61,11 +81,17 @@ def time_checker(current_utc_datetime, utc_source_date,
         time_label = current_datetime - stop_datetime
         color = "red"
 
+    for garbage_item in garbage:
+        del garbage_item
+
     return status_label, time_label, color        
         
 def page_content_update():
     
     while True:
+        
+        garbage = []
+        
         tunka_datetime_now = datetime.datetime.now(timezone_irkutsk)
         tunka_time_now = tunka_datetime_now.strftime("%H:%M:%S")
         tunka_date_now = tunka_datetime_now.strftime("%d:%m:%Y")
@@ -85,6 +111,10 @@ def page_content_update():
         local_date_now_label['text'] = local_date_now
         utc_date_now_label['text'] = utc_date_now
         
+        for garbage_item in (tunka_datetime_now, tunka_time_now, tunka_date_now,
+                             local_datetime_now, local_time_now, local_date_now,
+                             utc_datetime_now, utc_time_now, utc_date_now):
+            garbage.append(garbage_item)
         
         run_status, run_time, run_color = time_checker(utc_datetime_now, not_zero_duration_sources[0].utc_date,
                                                not_zero_duration_sources[0].utc_time_beg,
@@ -94,6 +124,9 @@ def page_content_update():
         hiscore_run_status_label = tk.Label(master=timetable_frame, text=run_time, fg=run_color, font=('Times','14', 'bold'))
         hiscore_run_status_text_label.grid(row=5, column=7)
         hiscore_run_status_label.grid(row=6, column=7)
+        
+        for garbage_item in (run_status, run_time, run_color):
+            garbage.append(garbage_item)
         
         for i in range(len(not_zero_duration_sources)):
 
@@ -107,7 +140,12 @@ def page_content_update():
             run_status_label.grid(row=4*i+18, column=7, ipadx=4, padx=4)
             run_time_label.grid(row=4*i+19, column=7, ipadx=4, padx=4)
             name_label.grid(row=4*i+17, column=1, ipadx=4, padx=4)
+            
+            for garbage_item in (run_status, run_time, run_color):
+                garbage.append(garbage_item)
 
+        for item in garbage:
+            del item
 
         sleep(5)
 # =============================================================================
@@ -117,6 +155,8 @@ def page_content_update():
 class Source:
     
     list_of_Sources = []
+    
+    __slots__ = ['name', 'code', 'ra', 'dec', 'dt', 'utc_date', 'utc_time_beg', 'utc_time_end', 'tunka_date_beg', 'tunka_time_beg', 'tunka_date_end', 'tunka_time_end']
     
     def __init__(self, name="Source", code="code", ra=0.0, dec=0.0, dt=0, utc_date=0, utc_time_beg=0,
                  utc_time_end=0, tunka_date_beg=0, tunka_time_beg=0, tunka_date_end=0, tunka_time_end=0):
@@ -153,6 +193,8 @@ class Source:
 # =============================================================================
 #
 # =============================================================================
+
+gc.enable()
 
 timetable_data = []
 with open(file_name, "r", encoding="cp1251") as fin:
@@ -268,7 +310,7 @@ hiscore_date_tunka_start_label = tk.Label(master=timetable_frame, text=not_zero_
 hiscore_time_tunka_stop_label = tk.Label(master=timetable_frame, text=not_zero_duration_sources[-1].tunka_time_end, font=('Times','14', 'bold'))
 hiscore_date_tunka_stop_label = tk.Label(master=timetable_frame, text=not_zero_duration_sources[-1].tunka_date_end, font=('Times','14', 'bold'))
 hiscore_run_duration_label = tk.Label(master=timetable_frame, text=duration(not_zero_duration_sources[0].utc_date,
-        not_zero_duration_sources[0].utc_time_beg, not_zero_duration_sources[0].utc_time_end), font=('Times','14', 'bold'))
+        not_zero_duration_sources[0].utc_time_beg, not_zero_duration_sources[-1].utc_time_end), font=('Times','14', 'bold'))
 hiscore_run_status_label = tk.Label(master=timetable_frame, text=run_time, fg=run_color, font=('Times','14', 'bold'))
 
 hiscore_label.grid(row=4, column=0, ipadx=4, padx=4)
