@@ -27,23 +27,8 @@ timezone_utc = pytz.timezone('UTC')
 
 def duration(date, start_time, stop_time):
     
-#    garbage = []
-#    
-#    d, m, y = [int(x) for x in date.split(".")]
-#    h_start, min_start = [int(x) for x in start_time.split(":")]
-#    h_stop, min_stop = [int(x) for x in stop_time.split(":")]
-    
-#    for garbage_item in (d, m, y, h_start, h_stop, min_start, min_stop):
-#        garbage.append(garbage_item)
-
-#    start_datetime = datetime.datetime(y, m, d, h_start, min_start)
-#    stop_datetime = datetime.datetime(y, m, d, h_stop, min_stop)
-    
     start_datetime = datetime.datetime(*[int(x) for x in date.split(".")[::-1]], *[int(x) for x in start_time.split(":")])
     stop_datetime = datetime.datetime(*[int(x) for x in date.split(".")[::-1]], *[int(x) for x in stop_time.split(":")])
-#    print(stop_datetime, start_datetime)
-#    for garbage_item in garbage:
-#        del garbage_item
     
     return stop_datetime - start_datetime
 
@@ -52,26 +37,9 @@ def time_checker(current_utc_datetime, utc_source_date,
     
     garbage = []
 
-#    cur_y, cur_m, cur_d, cur_h, cur_min, cur_s = current_utc_datetime.timetuple()[:6]
-    
-#    for garbage_item in (cur_y, cur_m, cur_d, cur_h, cur_min, cur_s):
-#         garbage.append(garbage_item)
-    
-#    d, m, y = [int(x) for x in utc_source_date.split(".")]
-#    h_start, min_start = [int(x) for x in utc_source_start_time.split(":")]
-#    h_stop, min_stop = [int(x) for x in utc_source_stop_time.split(":")]
-    
-#    for garbage_item in (d, m, y, h_start, h_stop, min_start, min_stop):
-#        garbage.append(garbage_item)
-
     start_datetime = datetime.datetime(*[int(x) for x in utc_source_date.split(".")[::-1]], *[int(x) for x in utc_source_start_time.split(":")])
     stop_datetime = datetime.datetime(*[int(x) for x in utc_source_date.split(".")[::-1]], *[int(x) for x in utc_source_stop_time.split(":")])
     current_datetime = datetime.datetime(*current_utc_datetime.timetuple()[:6])
-    
-#    start_datetime = datetime.datetime(y, m, d, h_start, min_start)
-#    stop_datetime = datetime.datetime(y, m, d, h_stop, min_stop)
-#    current_datetime = datetime.datetime(cur_y, cur_m, cur_d, cur_h, cur_min, cur_s)    
-    
     
     for garbage_item in (start_datetime, stop_datetime, current_datetime):
         garbage.append(garbage_item)
@@ -100,25 +68,6 @@ def page_content_update():
         
         garbage = []
         
-#        tunka_datetime_now = datetime.datetime.now(timezone_irkutsk)
-#        tunka_time_now = tunka_datetime_now.strftime("%H:%M:%S")
-#        tunka_date_now = tunka_datetime_now.strftime("%d:%m:%Y")
-        
-#        local_datetime_now = datetime.datetime.now()
-#        local_time_now = local_datetime_now.strftime("%H:%M:%S")
-#        local_date_now = local_datetime_now.strftime("%d:%m:%Y")
-
-#        utc_datetime_now = datetime.datetime.now(timezone_utc)
-#        utc_time_now = utc_datetime_now.strftime("%H:%M:%S")
-#        utc_date_now = utc_datetime_now.strftime("%d:%m:%Y")   
-
-#        tunka_time_now_label['text'] = tunka_time_now
-#        local_time_now_label['text'] = local_time_now
-#        utc_time_now_label['text'] = utc_time_now
-#        tunka_date_now_label['text'] = tunka_date_now
-#        local_date_now_label['text'] = local_date_now
-#        utc_date_now_label['text'] = utc_date_now
-        
         tunka_time_now_label['text'] = datetime.datetime.now(timezone_irkutsk).strftime("%H:%M:%S")
         local_time_now_label['text'] = datetime.datetime.now().strftime("%H:%M:%S")
         utc_time_now_label['text'] = datetime.datetime.now(timezone_utc).strftime("%H:%M:%S")
@@ -126,36 +75,18 @@ def page_content_update():
         local_date_now_label['text'] = datetime.datetime.now().strftime("%d:%m:%Y")
         utc_date_now_label['text'] = datetime.datetime.now(timezone_utc).strftime("%d:%m:%Y")       
         
-#        for garbage_item in (tunka_datetime_now, tunka_time_now, tunka_date_now,
-#                             local_datetime_now, local_time_now, local_date_now,
-#                             utc_datetime_now, utc_time_now, utc_date_now):
-#            garbage.append(garbage_item)
-        
         run_status, run_time, run_color = time_checker(datetime.datetime.now(timezone_utc),
                                                        not_zero_duration_sources[0].utc_date,
                                                        not_zero_duration_sources[0].utc_time_beg,
                                                        not_zero_duration_sources[-1].utc_time_end)
-
-
-
-#        run_status, run_time, run_color = time_checker(utc_datetime_now, not_zero_duration_sources[0].utc_date,
-#                                               not_zero_duration_sources[0].utc_time_beg,
-#                                               not_zero_duration_sources[-1].utc_time_end)
-        
+       
         hiscore_run_status_text_label = tk.Label(master=timetable_frame, text=run_status, fg = run_color, font=('Times','14', 'bold'))
         hiscore_run_status_label = tk.Label(master=timetable_frame, text=run_time, fg=run_color, font=('Times','14', 'bold'))
         hiscore_run_status_text_label.grid(row=5, column=7)
         hiscore_run_status_label.grid(row=6, column=7)
-        
-#        hiscore_run_status_text_label['text'] = run_status
-#        hiscore_run_status_text_label['fg'] = run_color
-#        hiscore_run_status_text_label['font'] = ('Times','14', 'bold')
-#        hiscore_run_status_label['text'] = run_time
-#        hiscore_run_status_label['fg'] = run_color
-#        hiscore_run_status_label['font'] = ('Times','14', 'bold')
                 
-#        for garbage_item in (run_status, run_time, run_color):
-#            garbage.append(garbage_item)
+        for garbage_item in (run_status, run_time, run_color):
+            garbage.append(garbage_item)
         
         for i in range(len(not_zero_duration_sources)):
 
@@ -170,17 +101,7 @@ def page_content_update():
             run_status_label.grid(row=4*i+18, column=7, ipadx=4, padx=4)
             run_time_label.grid(row=4*i+19, column=7, ipadx=4, padx=4)
             name_label.grid(row=4*i+17, column=1, ipadx=4, padx=4)
-            
-#            name_label['text'] = not_zero_duration_sources[i].name
-#            name_label['fg'] = run_color
-#            name_label['font'] = ('Times','14', 'bold')
-#            run_status_label['text'] = run_status
-#            run_status_label['fg'] = run_color
-#            run_status_label['font'] = ('Times','14', 'bold')
-#            run_time_label['text'] = run_time
-#            run_time_label['fg'] = run_color
-#            run_time_label['font'] = ('Times','14', 'bold')
-            
+
             for garbage_item in (run_status, run_time, run_color):
                 garbage.append(garbage_item)
 
@@ -271,10 +192,6 @@ not_zero_duration_sources = []
 for item in Source.list_of_Sources:
     if item.dt != "00:00":
         not_zero_duration_sources.append(item)
-###################  Затычка ######################
-#    else:
-#        not_zero_duration_sources.append(item)
-###############  Конец затычки ####################
 # =============================================================================
 #
 # =============================================================================
